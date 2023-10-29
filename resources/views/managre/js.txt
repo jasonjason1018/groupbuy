@@ -1,0 +1,41 @@
+[[ login ]]
+const { createApp, ref, onMounted } = Vue;
+createApp({
+    setup() {
+        const form = ref({
+            'username':'',
+            'password':'',
+            'table':'admin_member'
+        });
+        const txt = ref();
+
+        const login = () => {
+            if(form.value.username == '' || form.value.password == ''){
+                txt.value = form.value.username == ''?"帳號不可為空!":"密碼不可為空!";
+                console.log(txt);
+                return false;
+            }
+            txt.value = "";
+            const url = "/axios/login";
+            axios.post(url, form.value)
+            .then((res) => {
+                console.log(res.data);
+                if(res.data){
+                    window.location = '/managre/index';
+                    return false;
+                }
+                txt.value = "帳號或密碼錯誤";
+            })
+            .catch((err) => {
+                console.error(`Error: ${err}`);
+            })
+        }
+        
+        return {
+            form,
+            login,
+            txt
+        }
+    },
+}).use(ElementPlus).mount('#main-content')
+
