@@ -83,12 +83,12 @@ class FrontController extends Controller
 
     protected function getProductTotal(){
         extract($this->post);
-        return DB::table('product')->where('status', 1)->where('companyId', $this->request->session()->get('userData')[0]->companyId)->count();
+        return DB::table('product')->where('status', 1)->where('companyId', $this->request->session()->get('liffId'))->count();
     }
 
     protected function getProductList(){
         extract($this->post);
-        return DB::table('product')->where('status', 1)->where('companyId',$this->request->session()->get('userData')[0]->companyId)->offset($offset-1)->limit(1)->get();
+        return DB::table('product')->where('status', 1)->where('companyId',$this->request->session()->get('liffId'))->offset($offset-1)->limit(1)->get();
     }
 
     protected function userBuyProduct(){
@@ -110,6 +110,7 @@ class FrontController extends Controller
             'buy_quantity' => $buy_quantity,
             'sku' => $sku_str,
             'total_price' => $totalPrice,
+            'companyId' => $this->request->session()->get('liffId')
         ];
         DB::table('order_list')->insert($orderData);
         DB::table('product')->where('id', $productId)->update(['quantity' => $quantity-$buy_quantity]);

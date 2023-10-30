@@ -34,6 +34,7 @@ class managreController extends Controller
         if(count($data)){
            $this->request->session()->put('user_data', $data);
            $this->request->session()->put('username', $data[0]->username);
+           $this->request->session()->put('companyId', $data[0]->companyId);
            $loginStatus = true;
         }
         return $loginStatus;
@@ -48,7 +49,7 @@ class managreController extends Controller
     protected function getData(){
         $table = $this->post['table'];
         foreach($table as $k => $v){
-            $data[$k] = DB::table($v)->get();
+            $data[$k] = DB::table($v)->where('companyId',$this->request->session()->get('companyId'))->get();
         }
         return $data;
     }
@@ -74,6 +75,7 @@ class managreController extends Controller
         if($this->post['id'] == ''){
             $this->post['data']['launch_date'] = date("Y/m/d");
             $this->post['data']['sku'] = json_encode($this->post['data']['sku']);
+            $this->post['data']['companyId'] = $this->request->session()->get('companyId');
             $insertId = DB::table($this->post['table'])->insertGetId($this->post['data']);
             if($this->post['data']['status'] == 1){
                 $this->sendNewProductInfomation($insertId);
@@ -97,7 +99,7 @@ class managreController extends Controller
     }
 
     protected function getOrderList(){
-        $orderList = DB::table('order_list')->get();
+        $orderList = DB::table('order_list')->where('companyId',$this->request->session()->get('companyId'))->get();
         foreach($orderList as $k => $v){
             $orderList[$k]->buyer = $this->getBuyerName($v->buyer);
             $orderList[$k]->product_name = $this->getProductName($v->product_name);
@@ -117,7 +119,7 @@ class managreController extends Controller
 
     protected function getProductOderCount(){
         extract($this->post);
-        return DB::table('order_list')->where('product_name', $id)->count();
+        return DB::table('order_list')->where('product_name', $id)->where('companyId',$this->request->session()->get('companyId'))->count();
     }
 
     protected function productDelivery(){
@@ -126,8 +128,8 @@ class managreController extends Controller
             'status' => 0,
             'delivery_date' => date("Y/m/d")
         ]);
-        $product = DB::table('product')->where('id', $id)->get();
-        $data = DB::table('order_list')->where('product_name', $id)->get();
+        $product = DB::table('product')->where('id', $id)->where('companyId',$this->request->session()->get('companyId'))->get();
+        $data = DB::table('order_list')->where('product_name', $id)->where('companyId',$this->request->session()->get('companyId'))->get();
         $productName = $product[0]->name;
         $message = "商品".$productName."已到貨~";
         $userIds = array();
@@ -142,7 +144,7 @@ class managreController extends Controller
     protected function getMemberData(){
         $data = DB::table('member')->get();
         foreach($data as $k => $v){
-            $data[$k]->orderCount = DB::table('order_list')->where('buyer', $v->userId)->where('delivery_date', NULL)->count();
+            $data[$k]->orderCount = DB::table('order_list')->where('buyer', $v->userId)->where('delivery_date', NULL)->where('companyId',$this->request->session()->get('companyId'))->count();
         }
         return $data;
     }

@@ -6,14 +6,16 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $channelAccessToken = 'iq8N9ij+VNtbuHaAEByCJAbaynlLVC4f+Ch2gv8lGqzawsMxAz6s+feblUG5CBhCC8R8iaoFLxk62jRgtitWEntQFurS4Nr2C0jBWRFUUEX6pbIYKsP5wcNEDN0RPM3z2k+iiRXNFSzj7f+mDJW5rgdB04t89/1O/w1cDnyilFU=';
+    protected $channelAccessToken ;
     
     public function sendNewProductInfomation(){
+        $this->channelAccessToken = DB::table('admin_member')->where('companyId', $this->request->session()->get('companyId'))->get()[0]->accessToken;
         $client = new \GuzzleHttp\Client();
         $headers = [
             'Content-Type' => 'application/json; charset=utf-8',
@@ -35,7 +37,7 @@ class Controller extends BaseController
                     'template' => [
                         'type' => 'buttons', //類型 (按鈕)
                         'thumbnailImageUrl' => 'https://api.reh.tw/line/bot/example/assets/images/example.jpg', //圖片網址 <不一定需要>
-                        'title' => '新商品', //標題 <不一定需要>
+                        'title' => '新商品‼️強力推薦‼️', //標題 <不一定需要>
                         'text' => "名稱:".$this->post['data']['name']."\n價格:".$this->post['data']['price']."元", //文字
                         'actions' => [
                             [
