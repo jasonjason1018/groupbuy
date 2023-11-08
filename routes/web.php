@@ -16,14 +16,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/index/{token}', function ($token) {
-    return view('index', ['token' => $token]);
+Route::get('/index/{token}/{id?}', function ($token, $id='') {
+    return view('index', ['token' => $token, 'id' => $id]);
 });
 
 Route::get('/goToIndex/{userId}', 'FrontController@goToIndex');
 
 Route::get('/productList', function () {
     return view('productList');
+});
+
+Route::get('/product/{id}', function ($id) {
+    return view('product', ['id' => $id]);
 });
 
 Route::get('/liffIsLogin', 'FrontController@liffIsLogin');
@@ -58,5 +62,25 @@ Route::middleware('adminauth')->group(function () {
         Route::get('/{path_info}/{params?}', function ($path_info, $params = null) {
             return view('managre.' . $path_info, compact('params'));
         });
+    });
+});
+
+
+//站方
+Route::get('vendorLogin', function() {
+    return view('vendor.login');
+});
+Route::post('vendorCheckLogin', 'vendorManagementController@login');
+Route::get('vendorLogout', 'vendorManagementController@logout');
+
+Route::middleware('vendor')->group(function () {
+    Route::prefix('vendor')->group(function () {
+        Route::get('/{path_info}/{params?}', function ($path_info, $params = null) {
+            return view('vendor.' . $path_info, compact('params'));
+        });
+    });
+    Route::prefix('vendorAxios')->group(function () {
+        $path_info = explode('vendorAxios/', request()->getPathInfo())[1] ?? '';
+        Route::post('/'.$path_info, 'vendorManagementController@'.$path_info);
     });
 });

@@ -38,4 +38,45 @@
         </form>
     </div>
 </section>
-<script src="/admin/vue/login.js"></script>
+<script>
+    const { createApp, ref, onMounted } = Vue;
+    createApp({
+        setup() {
+            const form = ref({
+                'username':'',
+                'password':'',
+                'table':'vendor',
+                'login':true
+            });
+            const errMsg = ref();
+
+            const login = () => {
+                if(form.value.username == '' || form.value.password == ''){
+                    errMsg.value = form.value.username == ''?"帳號不可為空!":"密碼不可為空!";
+                    return false;
+                }
+                errMsg.value = "";
+                const url = "/vendorCheckLogin";
+                axios.post(url, form.value)
+                .then((res) => {
+                    if(res.data){
+                        window.location = '/vendor/index';
+                        return false;
+                    }
+                    form.value.username = '';
+                    form.value.password = '';
+                    errMsg.value = "帳號或密碼錯誤";
+                })
+                .catch((err) => {
+                    console.error(`Error: ${err}`);
+                })
+            }
+            
+            return {
+                form,
+                login,
+                errMsg
+            }
+        },
+    }).use(ElementPlus).mount('#main-content')
+</script>

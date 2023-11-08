@@ -3,8 +3,13 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <div id="liffId" style="display: none">{{ $token }}</div>
+<div id="productId" style="display: none">{{ $id }}</div>
 <script type="text/javascript">
 		liffId = $("#liffId").text();
+		productId = $("#productId").text();
+		if(productId != ''){
+			axios.post('/front/setProductId', {'productId': productId})
+		}
 		liff.init({
 			liffId: liffId
 		})

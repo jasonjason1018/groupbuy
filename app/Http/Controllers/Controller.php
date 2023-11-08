@@ -14,7 +14,7 @@ class Controller extends BaseController
 
     protected $channelAccessToken ;
     
-    public function sendNewProductInfomation(){
+    public function sendNewProductInfomation($id){
         $this->channelAccessToken = DB::table('admin_member')->where('companyId', $this->request->session()->get('companyId'))->get()[0]->accessToken;
         $client = new \GuzzleHttp\Client();
         $headers = [
@@ -43,7 +43,7 @@ class Controller extends BaseController
                             [
                                 'type' => 'uri', //類型 (連結)
                                 'label' => '前往', //標籤 3
-                                'uri' => 'http://localhost:8000/' //連結網址
+                                'uri' => 'https://groupbuy.learning365.tw/index/'.$this->request->session()->get('companyId').'/'.$id //連結網址
                             ],
 
                         ]

@@ -39,12 +39,19 @@ createApp({
         }
 
         const getProductList = () => {
-            axios.post('front/getProductList', { 'offset':offset.value })
-            .then((res) => {
-                // alert(res.data);
-                // return false;
-                res.data[0].sku = res.data[0].sku == '[]'?"":JSON.parse(res.data[0].sku);
-                data.value = res.data;
+            axios.post('/front/getProductId')
+            .then((resp) => {
+                console.log('re', resp.data);
+                if(resp.data != ''){
+                    offset.value = resp.data;
+                }
+            })
+            .finally(() => {
+                axios.post('front/getProductList', { 'offset':offset.value })
+                .then((res) => {
+                    res.data[0].sku = res.data[0].sku == '[]'?"":JSON.parse(res.data[0].sku);
+                    data.value = res.data;
+                })
             })
         }
 

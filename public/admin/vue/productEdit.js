@@ -42,7 +42,7 @@ createApp({
         };
 
         const onSubmit = () => {
-            // form.value.description = CKEDITOR.instances['description'].getData();
+            form.value.description = CKEDITOR.instances['description'].getData();
             form.value.status = form.value.status?"1":"0";
             params.value.data = form.value;
             params.value.id = id;
@@ -50,6 +50,10 @@ createApp({
             axios.post(url, params.value)
             .then((res) => {
                 if(res.status == 200){
+                    if(res.data == '請確認所有欄位是否都有填寫!'){
+                        alert(res.data);
+                        return false;
+                    }
                     prev();
                 }
             })
@@ -104,7 +108,7 @@ createApp({
 
         onMounted(() => {
             initBread();
-            // initCKEditor();
+            initCKEditor();
             getEditData();
         })
 

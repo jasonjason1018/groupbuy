@@ -61,6 +61,11 @@ class FrontController extends Controller
         $this->request->session()->put('liffId', $liffId);
     }
 
+    protected function setProductId(){
+        extract($this->post);
+        $this->request->session()->put('productId', $productId);
+    }
+
     protected function login(){
         if(!$this->request->session()->has('access_token')){
             $result = $this->getAccessToken();
@@ -83,16 +88,16 @@ class FrontController extends Controller
 
     protected function getProductTotal(){
         extract($this->post);
-        return DB::table('product')->where('status', 1)->where('companyId', $this->request->session()->get('liffId'))->count();
+        return DB::table('product')->where('status', 1)->where('companyId', $this->request->session()->get('userData')[0]->companyId)->count();
     }
 
     protected function getProductList(){
         extract($this->post);
-        return DB::table('product')->where('status', 1)->where('companyId',$this->request->session()->get('liffId'))->offset($offset-1)->limit(1)->get();
+        return DB::table('product')->where('status', 1)->where('companyId',$this->request->session()->get('userData')[0]->companyId)->offset($offset-1)->limit(1)->get();
     }
 
     protected function userBuyProduct(){
-        extract($this->post);
+        
         if($this->request->session()->get('userId') == ''){
             return 'undefined';
         }
@@ -110,13 +115,26 @@ class FrontController extends Controller
             'buy_quantity' => $buy_quantity,
             'sku' => $sku_str,
             'total_price' => $totalPrice,
-            'companyId' => $this->request->session()->get('liffId')
         ];
         DB::table('order_list')->insert($orderData);
         DB::table('product')->where('id', $productId)->update(['quantity' => $quantity-$buy_quantity]);
         $memberConsumption = DB::table('member')->select('consumption')->where('userId', $userId)->get()[0]->consumption;
         DB::table('member')->where('userId', $userId)->update(['consumption' => $memberConsumption+$totalPrice]);
         return 'success';
+    }
+
+    protected function getProductId(){
+        $offset = '';
+        if(null !== $this->request->session()->get('productId')){
+            $data = DB::table('product')->where('status', 1)->where('companyId',$this->request->session()->get('userData')[0]->companyId)->get();
+            foreach($data as $k => $v){
+                if($this->request->session()->get('productId') == $v->id){
+                    $offset = $k+1;
+                }
+            }
+        }
+        $this->request->session()->forget('productId');
+        return $offset;
     }
     
 }

@@ -25,8 +25,8 @@
                         </el-form-item>
 
                         <el-form-item label="商品說明">
-                            <el-input type="textarea" v-model="form.description">
-                            <!-- <textarea id="description" v-model="form.description"></textarea> -->
+                            <!-- <el-input type="textarea" v-model="form.description"> -->
+                            <textarea id="description" v-model="form.description"></textarea>
                         </el-form-item>
                         
                         <el-form-item label="規格">
