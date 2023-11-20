@@ -4,3 +4,4 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="//unpkg.com/element-plus"></script>
 <script src="/ckeditor/ckeditor.js"></script>
+<script src="//unpkg.com/@element-plus/icons-vue"></script>

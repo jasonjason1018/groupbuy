@@ -21,11 +21,12 @@ class FrontController extends Controller
     }
 
     private function getAccessToken(){
+        $http = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
         $result = $this->client->post('https://api.line.me/oauth2/v2.1/token', [
             'form_params' => [
                 'grant_type' => 'authorization_code',
                 'code' => $this->request->code,
-                'redirect_uri' => 'https://groupbuy.learning365.tw/front/login',
+                'redirect_uri' => $http.'://'.$_SERVER['HTTP_HOST'].'/front/login',
                 'client_id' => '2000777378',
                 'client_secret' => 'c877c03f48134d2daf5121a99e48fa76'
             ]

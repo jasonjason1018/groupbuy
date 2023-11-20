@@ -34,7 +34,7 @@
                     <div class="info-box dark-bg">
                         <i class="fa fa-cubes"></i>
                         <div class="count">@{{ k }}</div>
-                        <div class="title">@{{ v.length }}</div>
+                        <div class="title">@{{ v }}</div>
                     </div>
                 </div>
             </div>

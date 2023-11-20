@@ -22,7 +22,7 @@
 				})
 			}else{
 				axios.post('/front/setToken', {'liffId': liffId})
-				window.location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2000777378&redirect_uri=https://groupbuy.learning365.tw/front/login&state=12345abcde&scope=openid%20profile&nonce=09876xyz'
+				window.location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2000777378&redirect_uri='+window.location.origin+'/front/login&state=12345abcde&scope=openid%20profile&nonce=09876xyz'
 			}
 		})
 		.catch(() => {

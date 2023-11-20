@@ -7,7 +7,7 @@ createApp({
     	const infoBox = ref();
 
     	const apiData = {
-    		'table':{
+    		table:{
     			'商品':"product",
     			'訂單':"order_list",
     			'會員':"product"
@@ -15,7 +15,7 @@ createApp({
     	}
 
     	const getData = () => {
-    		axios.post('/axios/getData', apiData)
+    		axios.post('/axios/getIndexData', apiData)
     		.then((res) => {
     			infoBox.value = res.data
     		});

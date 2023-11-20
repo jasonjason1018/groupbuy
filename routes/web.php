@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/{id}', function(){
+    return view('welcome');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -31,14 +35,12 @@ Route::get('/product/{id}', function ($id) {
 });
 
 Route::get('/liffIsLogin', 'FrontController@liffIsLogin');
-// Route::get('/liffIsLogin/{token}', function($token){
-//     return $token;
-// });
 
 Route::prefix('front')->group(function () {
     $path_info = explode('front/', request()->getPathInfo())[1] ?? '';
     Route::any('/'.$path_info, 'FrontController@'.$path_info);
 });
+
 
 Route::get('/test', 'managreController@Test');
 

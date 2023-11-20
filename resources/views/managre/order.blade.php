@@ -27,26 +27,6 @@
                         <el-table-column label="備註" prop="remark" align="center"></el-table-column>
                         <el-table-column label="購買數量" prop="buy_quantity" align="center"></el-table-column>
                         <el-table-column label="訂單總金額" prop="total_price" align="center"></el-table-column>
-                        <!-- <el-table-column align="center">
-                            <template #header>
-                                <el-button size="small" type="primary" @click="handleEdit()">新增</el-button>
-                            </template>
-                            <template #default="scope">
-                                <el-button
-                                    size="small"
-                                    @click="handleEdit(`${scope.row.id}`)"
-                                >
-                                    編輯
-                                </el-button>
-                                <el-button
-                                    size="small"
-                                    type="danger"
-                                    @click="handleDelete(`${scope.row.id}`)"
-                                >
-                                    刪除
-                                </el-button>
-                            </template>
-                        </el-table-column> -->
                     </el-table>
                 </div>
             </div>

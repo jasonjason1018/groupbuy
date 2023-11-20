@@ -15,49 +15,43 @@ createApp({
             window.location.href = url.value;
         }
 
-        const getApiData = {
-            'table':{
-                '0':"product",
-            }
-        }
-
         const handleDelete = (id) => {
-            const url = ref("/managre/productEdit");
-            const apiData = {
+            const params = {
                 'table':'product',
                 'id':id
             }
-            axios.post('/axios/deleteData', apiData)
-            .finally(() => {
-                getData();
-            });
-        }
-
-        const getProductOderCount = () => {
-            data.value.forEach((v, k) => {
-                const params = {
-                    'id': v.id,
+            Swal.fire({
+                title: "確定刪除?",
+                showCancelButton: true,
+                confirmButtonText: "刪除",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('/axios/deleteData', params)
+                    .finally(() => {
+                        getData();
+                    });
                 }
-                axios.post('/axios/getProductOderCount', params)
-                .then((res) => {
-                    data.value[k].orderCount = res.data;
-                })
             });
         }
 
         const getData = () => {
-            axios.post('/axios/getData', getApiData)
+            const params = {
+                table:"product",
+            }
+            axios.post('/axios/getProductList', params)
             .then((res) => {
-                data.value = res.data[0];
+                console.log(res.data);
+                data.value = res.data;
             })
             .finally(() => {
-                getProductOderCount();
+                //getProductOderCount();
             });
         }
 
-        const productDelivery = (id) => {
+        const productDelivery = (id, name) => {
             params = {
-                'id': id
+                id: id,
+                productName: name
             }
             axios.post('/axios/productDelivery', params)
             .then((res) => {

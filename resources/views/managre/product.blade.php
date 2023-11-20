@@ -27,8 +27,8 @@
                                 <span v-else style="color:red;">下架</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="訂單數量" prop="orderCount" align="center"></el-table-column>
-                        <el-table-column label="領貨數量" prop="count" align="center"></el-table-column>
+                        <el-table-column label="訂單數量" prop="totalOrders" align="center"></el-table-column>
+                        <el-table-column label="領貨數量" prop="totalDelivery" align="center"></el-table-column>
                         <el-table-column label="上架日期" prop="launch_date" align="center"></el-table-column>
                         <el-table-column label="到貨日期" prop="delivery_date" align="center"></el-table-column>
                         <el-table-column label="備註" prop="remark" align="center"></el-table-column>
@@ -38,7 +38,7 @@
                                     v-if="scope.row.delivery_date == undefined"
                                     type="primary"
                                     size="small"
-                                    @click="productDelivery(`${ scope.row.id }`)"
+                                    @click="productDelivery(`${ scope.row.id }`, `${scope.row.name}`)"
                                 >
                                     到貨
                                 </el-button>

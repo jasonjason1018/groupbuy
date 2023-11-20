@@ -43,7 +43,6 @@ createApp({
 
         const onSubmit = () => {
             form.value.description = CKEDITOR.instances['description'].getData();
-            form.value.status = form.value.status?"1":"0";
             params.value.data = form.value;
             params.value.id = id;
             const url = '/axios/insertEdit';

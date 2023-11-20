@@ -12,38 +12,48 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $channelAccessToken ;
-    
-    public function sendNewProductInfomation($id){
-        $this->channelAccessToken = DB::table('admin_member')->where('companyId', $this->request->session()->get('companyId'))->get()[0]->accessToken;
-        $client = new \GuzzleHttp\Client();
-        $headers = [
+    protected $headers;
+    protected $client;
+    protected $companyId;
+
+    public function redirectFunction($function, $params = []){
+        $query = DB::table('admin_member');
+        if(null !== $this->companyId){
+            $this->companyId = $this->request->session()->get('companyId');
+            $query = $query->where('companyId', $this->companyId);
+        }
+        $data = $query->first();
+        $accessToken = $data->accessToken;
+        if(null === $this->companyId){
+            $this->companyId = $data->companyId;
+        }
+        $this->headers = [
             'Content-Type' => 'application/json; charset=utf-8',
-            'Authorization' => 'Bearer ' . $this->channelAccessToken,
+            'Authorization' => 'Bearer ' . $accessToken,
         ];
-        $textData = [
-            'messages' => [
-                [
-                    'type' => 'text',
-                    'text' => "新商品\n名稱:".$this->post['data']['name']."\n價格:".$this->post['data']['price']."元",
-                ]
-            ]
-        ];
+        $this->client = new \GuzzleHttp\Client();
+        $this->$function($params);
+    }
+    
+    private function sendNewProductInfomation($params){
+        if(isset($this->post['data'])){
+            extract($this->post['data']);
+        }
         $templateData = [
             'messages' => [
                 [
-                    'type' => 'template', //訊息類型 (模板)
+                    'type' => 'template', 
                     'altText' => '新商品通知',
                     'template' => [
-                        'type' => 'buttons', //類型 (按鈕)
-                        'thumbnailImageUrl' => 'https://api.reh.tw/line/bot/example/assets/images/example.jpg', //圖片網址 <不一定需要>
-                        'title' => '新商品‼️強力推薦‼️', //標題 <不一定需要>
-                        'text' => "名稱:".$this->post['data']['name']."\n價格:".$this->post['data']['price']."元", //文字
+                        'type' => 'buttons', 
+                        'thumbnailImageUrl' => 'https://api.reh.tw/line/bot/example/assets/images/example.jpg', 
+                        'title' => '新商品‼️強力推薦‼️', 
+                        'text' => "名稱:".$name."\n價格:".$price."元", 
                         'actions' => [
                             [
-                                'type' => 'uri', //類型 (連結)
-                                'label' => '前往', //標籤 3
-                                'uri' => 'https://groupbuy.learning365.tw/index/'.$this->request->session()->get('companyId').'/'.$id //連結網址
+                                'type' => 'uri', 
+                                'label' => '前往', 
+                                'uri' => 'https://groupbuy.learning365.tw/index/'.$this->companyId.'/'.$params['id'] //連結網址
                             ],
 
                         ]
@@ -51,76 +61,36 @@ class Controller extends BaseController
                 ]
             ]
         ];
-        $client->post('https://api.line.me/v2/bot/message/broadcast', [
-            'headers' => $headers,
+        // die(print_r($templateData));
+        $this->client->post('https://api.line.me/v2/bot/message/broadcast', [
+            'headers' => $this->headers,
             'json' => $templateData
         ]);
     }
 
-    public function TestMessage(){
-        $client = new \GuzzleHttp\Client();
-        $headers = [
-            'Content-Type' => 'application/json; charset=utf-8',
-            'Authorization' => 'Bearer ' . $this->channelAccessToken,
-        ];
-        $data = [
-            'messages' => [
-                [
-                    'type' => 'template', //訊息類型 (模板)
-                    'altText' => 'Example buttons template',
-                    'template' => [
-                        'type' => 'buttons', //類型 (按鈕)
-                        'thumbnailImageUrl' => 'https://api.reh.tw/line/bot/example/assets/images/example.jpg', //圖片網址 <不一定需要>
-                        'title' => '新商品', //標題 <不一定需要>
-                        'text' => "新商品\n名稱:".$this->post['data']['name']."\n價格:".$this->post['data']['price']."元", //文字
-                        'actions' => [
-                            // [
-                            //     'type' => 'postback', //類型 (回傳)
-                            //     'label' => 'Postback example', //標籤 1
-                            //     'data' => 'action=buy&itemid=123'
-                            // ],
-                            // [
-                            //     'type' => 'message', //類型 (訊息)
-                            //     'label' => 'Message example', //標籤 2
-                            //     'text' => 'Message example' 
-                            // ],
-                            [
-                                'type' => 'uri', //類型 (連結)
-                                'label' => 'Uri example', //標籤 3
-                                'uri' => 'http://localhost:8000/' //連結網址
-                            ],
-
-                        ]
-                    ]
-                ]
-            ]
-        ];
-        $client->post('https://api.line.me/v2/bot/message/broadcast', [
-            'headers' => $headers,
-            'json' => $data
-        ]);
-    }
-
-    public function productDeliveryInformation($userIds = [], $message){
-        $client = new \GuzzleHttp\Client();
-        $headers = [
-            'Content-Type' => 'application/json; charset=utf-8',
-            'Authorization' => 'Bearer ' . $this->channelAccessToken,
-        ];
-
+    private function productDeliveryInformation($params){
         $payload = [
-            'to' => $userIds,
+            'to' => $params['userIds'],
             'messages' => [
                 [
                     'type' => 'text',
-                    'text' => $message
+                    'text' => $params['message'],
                 ]
             ]
         ];
 
-        $client->post('https://api.line.me/v2/bot/message/multicast', [
-            'headers' => $headers,
+        $this->client->post('https://api.line.me/v2/bot/message/multicast', [
+            'headers' => $this->headers,
             'json' => $payload
         ]);
+    }
+
+    //取得已寄送訊息數量
+    private function getSendMessageCount(){
+        $result = $this->client->get('https://api.line.me/v2/bot/message/quota/consumption', [
+            'headers' => $this->headers,
+        ]);
+        $result = json_decode($result->getBody()->getContents(), true);
+        print_r($result['totalUsage']);
     }
 }

@@ -20,9 +20,15 @@
                 </a>
             </li>
             <li class="">
-                <a class="" href="member">
+                <a class="" href="/managre/member">
                     <i class="icon_house_alt"></i>
                     <span>會員</span>
+                </a>
+            </li>
+            <li class="">
+                <a class="" href="/managre/image_gallery">
+                    <i class="icon_house_alt"></i>
+                    <span>圖庫</span>
                 </a>
             </li>
         </ul>
