@@ -1,10 +1,10 @@
-@include('managre.include.head')
-<link rel="stylesheet" href="/admin/css/bootstrap.min.css">
-<link rel="stylesheet" href="/admin/css/bootstrap-theme.css">
-<link rel="stylesheet" href="/admin/css/elegant-icons-style.css">
-<link rel="stylesheet" href="/admin/css/font-awesome.css">
-<link rel="stylesheet" href="/admin/css/style.css">
-<link rel="stylesheet" href="/admin/css/style-responsive.css">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="//unpkg.com/element-plus"></script>
+<script src="//unpkg.com/@element-plus/icons-vue"></script>
 <style>
     [v-cloak] {
         display: none;
@@ -20,10 +20,10 @@
     <div class="container">
         <form class="login-form">        
             <div class="login-wrap">
-                <p class="login-img">後台</p>
+                <p class="login-img">後台{{ $params }}</p>
                 <div class="input-group">
                 <span class="input-group-addon"><i class="icon_profile"></i></span>
-                <input type="text" name="username" class="form-control" placeholder="Username" autofocus v-model="form.username">
+                <!-- <input type="text" name="username" class="form-control" placeholder="Username" autofocus v-model="form.username">
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="icon_key_alt"></i></span>
@@ -32,10 +32,40 @@
                 <div><center style="color:red">@{{ errMsg??"" }}</center></div>
                 <label class="checkbox">
                     <span class="pull-right"> <a href="#"> Forgot Password?</a></span>
-                </label>
+                </label> -->
                 <button class="btn btn-primary btn-lg btn-block" type="button" @click="login">Login</button>
             </div>
         </form>
     </div>
 </section>
-<script src="/admin/vue/login.js"></script>
+<!-- <script src="/admin/vue/login.js"></script> -->
+<script>
+    const { createApp, ref, onMounted } = Vue;
+    createApp({
+        setup() {
+            const liffId = ref();
+            onMounted(() => {
+                liffId.value = "{{ $params }}";
+                liff.init({
+                    liffId: liffId.value,
+                })
+                .then(() => {
+                    if(!liff.isLoggedIn()){
+                        alert('電腦版本無發使用推播訊息功能');
+                        return false;
+                    }
+                    alert(JSON.stringify(liff.getContext()));
+                })
+                .catch((err) => {
+                    message.value = err;
+                    data.value.push({ liffId: liffId.value, message: 'err' });
+                    console.error(message.value);
+                })
+            });
+
+            return {
+                
+            }
+        },
+    }).use(ElementPlus).mount('#main-content')
+</script>

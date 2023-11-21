@@ -26,7 +26,6 @@
             </template>
         </el-table-column>
     </el-table>
-    <el-button @click="logout">redirect</el-button>
 </section>
 <script>
     const { createApp, ref, onMounted } = Vue;
@@ -47,16 +46,16 @@
             ]);
 
             onMounted(() => {
-                liffId.value = location.pathname.split('/')[1];
+                liffId.value = '2000777378-djn4NEmW';
                 liff.init({
                     liffId: liffId.value,
-                    groupId: '10c5a999-e195-4d94-9900-58b9ac740918',
                 })
                 .then(() => {
-                    if(!liff.isLoggedIn()){
-                        liff.login();
-                    }
+                    // if(!liff.isLoggedIn()){
+                    //     liff.login();
+                    // }
                     data.value.push({ liffId: liffId.value, userId: liff.getContext().userId });
+                    alert(JSON.stringify(liff.getContext()));
                 })
                 .catch((err) => {
                     message.value = err;
@@ -64,11 +63,6 @@
                     console.error(message.value);
                 })
             });
-
-            const logout = () => {
-                // liff.logout();
-                window.location.href = "/welcome2/rrr";
-            }
 
             const share = (scope) => {
                 console.log(liff.getContext());
@@ -97,7 +91,6 @@
 
             return {
                 data,
-                logout,
                 product_data,
                 share,
             }

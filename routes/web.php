@@ -17,6 +17,10 @@ Route::get('/{id}', function(){
     return view('welcome');
 });
 
+Route::get('/welcome2/rrr', function(){
+    return view('welcome2');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -50,8 +54,8 @@ Route::get('/test', 'managreController@Test');
 
 //後台
 Route::get('admin/logout', 'managreController@logout');
-Route::get('admin/login', function() {
-    return view('managre.login');
+Route::get('admin/login/{id}', function($params) {
+    return view('managre.login', ['params' => $params]);
 });
 Route::post('checkLogin', 'managreController@login');
 
